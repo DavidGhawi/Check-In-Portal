@@ -20,6 +20,7 @@ import uk.ac.cardiff.ASE2022Y2TEAM07.service.OneToOneService;
 import uk.ac.cardiff.ASE2022Y2TEAM07.web.forms.OneToOneForm;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
@@ -47,7 +48,7 @@ public class OneToOneController {
     }
     @GetMapping("")
     public ModelAndView getOneToOneForm (Model model) {
-        model.addAttribute("OneToOneForm", new OneToOneForm());
+        model.addAttribute("OneToOneForm", new OneToOneForm(LocalDate.now(), "Test"));
         var mv = new ModelAndView("employee/EmployeeOneToOnePage", model.asMap());
         return mv;
     }
@@ -55,6 +56,8 @@ public class OneToOneController {
     @PostMapping("")
     public ModelAndView postOneToOneForm (@Valid OneToOneForm oneToOneForm, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            System.out.println("LOG: User Error - Binding result has errors");
+            System.out.println(bindingResult.getAllErrors());
             model.addAttribute("OneToOneForm", oneToOneForm);
             var mv = new ModelAndView("employee/EmployeeOneToOnePage", model.asMap());
             return mv;
