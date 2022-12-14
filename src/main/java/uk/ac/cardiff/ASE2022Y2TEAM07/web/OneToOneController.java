@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,8 @@ import uk.ac.cardiff.ASE2022Y2TEAM07.repositories.EmployeeRepository;
 import uk.ac.cardiff.ASE2022Y2TEAM07.service.EmployeeService;
 import uk.ac.cardiff.ASE2022Y2TEAM07.service.OneToOneService;
 import uk.ac.cardiff.ASE2022Y2TEAM07.web.forms.OneToOneForm;
+
+import javax.validation.Valid;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_EMPLOYEE')")
@@ -50,7 +53,13 @@ public class OneToOneController {
     }
 
     @PostMapping("")
-    public ModelAndView postOneToOneForm (Model model, OneToOneForm oneToOneForm) {
+    public ModelAndView postOneToOneForm (@Valid OneToOneForm oneToOneForm, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("OneToOneForm", oneToOneForm);
+            var mv = new ModelAndView("employee/EmployeeOneToOnePage", model.asMap());
+            return mv;
+        }
+
         Employee employee = getCurrentEmployee();
 
         OneToOneDto oneToOneDto = new OneToOneDto(1, employee.getEmployeeId(), employee.getSupervisorId(), oneToOneForm.getDate());
