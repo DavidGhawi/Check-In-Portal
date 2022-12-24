@@ -17,6 +17,8 @@ import uk.ac.cardiff.ASE2022Y2TEAM07.service.GoalService;
 import uk.ac.cardiff.ASE2022Y2TEAM07.web.forms.CheckinForm;
 import uk.ac.cardiff.ASE2022Y2TEAM07.web.forms.GoalForm;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("employee/goals")
@@ -40,22 +42,32 @@ public class GoalsController {
     }
 
     @GetMapping("")
-    public ModelAndView personalGoals(Model model) {
+    public ModelAndView personalGoals(Model model, GoalForm goalForm) {
         int em = oneToOneController.getCurrentEmployee().getEmployeeId();
         List<Goal> goals = goalRepository.findAllByEmployeeId(em);
 
         model.addAttribute("employeeGoals", goals);
-        model.addAttribute("goalForm", new GoalForm());
+        model.addAttribute("goalForm", goalForm);
 
         var mv = new ModelAndView("employee/EmployeePersonalGoalsPage", model.asMap());
         return mv;
     }
 
     @PostMapping("")
-    public ModelAndView personalGoal(Model model, GoalForm goalForm, BindingResult bindingResult) {
+    public ModelAndView personalGoal(@Valid GoalForm goalForm, BindingResult bindingResult, Model model) {
         Employee em = oneToOneController.getCurrentEmployee();
 
-//        model.addAttribute("goalFrom", goalForm);
+        if (bindingResult.hasErrors()){
+            ArrayList<String> errors = new ArrayList<>();
+            for ( var error : bindingResult.getAllErrors()) {
+                errors.add(error.getDefaultMessage());
+            }
+            model.addAttribute("errors", errors);
+            model.addAttribute("goalForm", goalForm);
+
+            var mv = new ModelAndView("employee/EmployeePersonalGoalsPage", model.asMap());
+            return mv;
+        }
 
         GoalDto goalDto = new GoalDto(null, em.getEmployeeId(), goalForm.getTitle(), goalForm.getDescription(), goalForm.getTargetDate());
         goalService.save(goalDto);
