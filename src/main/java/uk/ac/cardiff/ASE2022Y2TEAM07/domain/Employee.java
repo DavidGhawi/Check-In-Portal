@@ -2,6 +2,7 @@ package uk.ac.cardiff.ASE2022Y2TEAM07.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.MappedCollection;
@@ -16,7 +17,8 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-@Table
+@Table("EMPLOYEE")
+@NoArgsConstructor
 public class Employee {
     public int getEmployeeId() {
         return employeeId;

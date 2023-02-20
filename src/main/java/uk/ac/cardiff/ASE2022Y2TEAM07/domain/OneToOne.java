@@ -18,6 +18,7 @@ import java.time.LocalDate;
 
 @Data
 //@AllArgsConstructor
+@Table("ONE_TO_ONE")
 public class OneToOne {
     @Id
     @Column("ONE_TO_ONE_ID")
