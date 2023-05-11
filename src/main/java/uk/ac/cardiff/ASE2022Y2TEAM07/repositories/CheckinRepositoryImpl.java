@@ -68,7 +68,26 @@ public class CheckinRepositoryImpl implements CheckinRepository{
                 rs.getInt("EMPLOYEE_ID"),
                 rs.getInt("AVG_SCORE"));
 
-        String employeeAvg = "SELECT AVG(CHECK_INS.SCORE) as AVG_SCORE, CHECK_INS.EMPLOYEE_ID FROM CHECK_INS JOIN EMPLOYEE ON EMPLOYEE.EMPLOYEE_ID = CHECK_INS.EMPLOYEE_ID GROUP BY CHECK_INS.EMPLOYEE_ID";
+        String employeeAvg = "SELECT AVG(CHECK_INS.SCORE) as AVG_SCORE, CHECK_INS.EMPLOYEE_ID FROM CHECK_INS JOIN " +
+                "EMPLOYEE ON EMPLOYEE.EMPLOYEE_ID = CHECK_INS.EMPLOYEE_ID GROUP BY CHECK_INS.EMPLOYEE_ID";
         return jdbc.query(employeeAvg, checkinMapper);
     }
+
+//    @Override
+//    public List<Checkin> findEmployeeWithAvg() {
+//        RowMapper<Checkin> checkinMapper = (rs, i) -> new Checkin(
+//                rs.getInt("EMPLOYEE_ID"),
+//                rs.getInt("AVG_SCORE"));
+//
+//        String employeeAvg = "WITH LAST_7_CHECKINS AS (" +
+//                "SELECT CHECK_INS.EMPLOYEE_ID, CHECK_INS.SCORE, ROW_NUMBER() OVER (PARTITION BY CHECK_INS.EMPLOYEE_ID ORDER BY CHECK_INS.DATE DESC) AS RN " +
+//                "FROM CHECK_INS " +
+//                "JOIN EMPLOYEE ON EMPLOYEE.EMPLOYEE_ID = CHECK_INS.EMPLOYEE_ID) " +
+//                "SELECT AVG(LAST_7_CHECKINS.SCORE) AS AVG_SCORE, LAST_7_CHECKINS.EMPLOYEE_ID " +
+//                "FROM LAST_7_CHECKINS " +
+//                "WHERE LAST_7_CHECKINS.RN <= 7 " +
+//                "GROUP BY LAST_7_CHECKINS.EMPLOYEE_ID";
+//
+//        return jdbc.query(employeeAvg, checkinMapper);
+//    }
 }
